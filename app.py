@@ -5,10 +5,13 @@ import base64
 import os
 from datetime import datetime
 import zipfile
+from dotenv import load_dotenv
 
 app = Flask(__name__)
 
+load_dotenv()
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD")
+print("admin password:", ADMIN_PASSWORD)
 
 # Directory where QR codes are stored
 QR_CODES_DIR = "qr_codes"  # Adjust the path as needed
