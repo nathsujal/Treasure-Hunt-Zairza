@@ -4,7 +4,7 @@ from io import BytesIO
 import base64
 import os
 from datetime import datetime
-from werkzeug.urls import url_quote
+import zipfile
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'your-secret-key-here')
@@ -55,63 +55,43 @@ def get_base_url():
         return os.environ.get('RENDER_EXTERNAL_URL', 'http://localhost:10000')
     return request.url_root.rstrip('/')
 
-def generate_qr_code(data, location_id):
-    """Generate QR code and return as base64 string"""
-    qr = qrcode.QRCode(
-        version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_H,
-        box_size=10,
-        border=4,
-    )
-    qr.add_data(data)
-    qr.make(fit=True)
+def generate_qr_codes():
+    """Generate all QR codes and save them to the system"""
+    base_url = get_base_url()
     
-    img = qr.make_image(fill_color="black", back_color="white")
-    
-    # Save to BytesIO object
-    buffered = BytesIO()
-    img.save(buffered, format="PNG")
-    
-    # Save to file system
     if not os.path.exists('static/qr_codes'):
         os.makedirs('static/qr_codes')
-    img.save(f'static/qr_codes/location_{location_id}.png')
     
-    return base64.b64encode(buffered.getvalue()).decode()
+    for location_id in LOCATIONS:
+        url = f"{base_url}/location/{location_id}"
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_H,
+            box_size=10,
+            border=4,
+        )
+        qr.add_data(url)
+        qr.make(fit=True)
+        
+        img = qr.make_image(fill_color="black", back_color="white")
+        img.save(f'static/qr_codes/location_{location_id}.png')
+
+def get_qr_code_data(location_id):
+    """Get QR code as base64 string"""
+    with open(f'static/qr_codes/location_{location_id}.png', 'rb') as f:
+        return base64.b64encode(f.read()).decode()
 
 @app.route('/')
 def index():
+    # Generate QR codes when the application starts
+    generate_qr_codes()
     return render_template('index.html')
-
-@app.route('/generate_qr_codes')
-def generate_qr_codes_page():
-    base_url = get_base_url()
-    qr_codes = {}
-    
-    for location_id, location_data in LOCATIONS.items():
-        url = f"{base_url}/location/{location_id}"
-        qr_codes[location_id] = {
-            'image': generate_qr_code(url, location_id),
-            'name': location_data['name'],
-            'url': url
-        }
-    
-    return render_template('qr_codes.html', locations=LOCATIONS, qr_codes=qr_codes)
 
 @app.route('/download_qr_codes')
 def download_qr_codes():
-    base_url = get_base_url()
-    
-    # Generate all QR codes
-    for location_id in LOCATIONS:
-        url = f"{base_url}/location/{location_id}"
-        generate_qr_code(url, location_id)
-    
+    # Create zip file containing all QR codes
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     zip_filename = f'qr_codes_{timestamp}.zip'
-    
-    # Create zip file containing all QR codes
-    import zipfile
     
     if not os.path.exists('static/downloads'):
         os.makedirs('static/downloads')
@@ -139,6 +119,7 @@ def location(location_id):
     error = None
     unlocked = False
 
+    # First location is always unlocked
     if location_id == 'A':
         unlocked = True
 
@@ -163,43 +144,6 @@ for directory in ['static/qr_codes', 'static/downloads', 'templates']:
         os.makedirs(directory)
 
 # Write the template files
-with open('templates/qr_codes.html', 'w') as f:
-    f.write('''
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Treasure Hunt QR Codes</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-100 min-h-screen py-6">
-    <div class="max-w-6xl mx-auto">
-        <div class="bg-white rounded-xl shadow-md overflow-hidden m-4 p-6">
-            <h1 class="text-2xl font-bold mb-4">Treasure Hunt QR Codes</h1>
-            <div class="mb-4">
-                <a href="{{ url_for('download_qr_codes') }}" 
-                   class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-                    Download All QR Codes (ZIP)
-                </a>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {% for location_id, qr_data in qr_codes.items() %}
-                <div class="border rounded-lg p-4">
-                    <h2 class="text-xl font-semibold mb-2">Location {{ location_id }}: {{ qr_data.name }}</h2>
-                    <img src="data:image/png;base64,{{ qr_data.image }}" 
-                         alt="QR Code for Location {{ location_id }}"
-                         class="mx-auto mb-2">
-                    <div class="text-sm text-gray-600">
-                        <p>URL: {{ qr_data.url }}</p>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </div>
-</body>
-</html>
-''')
-
 with open('templates/index.html', 'w') as f:
     f.write('''
 <!DOCTYPE html>
@@ -211,11 +155,11 @@ with open('templates/index.html', 'w') as f:
 <body class="bg-gray-100 min-h-screen py-6">
     <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl m-4 p-6">
         <h1 class="text-2xl font-bold mb-4">Welcome to the Treasure Hunt!</h1>
-        <p class="mb-4">Start your journey by scanning the QR code at Location A.</p>
+        <p class="mb-4">Start your journey by visiting Location A: Starting Point - Library</p>
         <p class="text-sm text-gray-600 mb-4">Each location will provide you with a riddle leading to the next location.</p>
-        <a href="{{ url_for('generate_qr_codes_page') }}" 
+        <a href="{{ url_for('location', location_id='A') }}" 
            class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-            Generate QR Codes
+            Start Hunt
         </a>
     </div>
 </body>
@@ -262,17 +206,12 @@ with open('templates/location.html', 'w') as f:
                     <h2 class="font-semibold">Your Riddle:</h2>
                     <p>{{location.riddle}}</p>
                 </div>
-                {% if location.next_location %}
-                    <div>
-                        <h2 class="font-semibold">Next Location:</h2>
-                        <p>Find the QR code at the location described in the riddle!</p>
-                    </div>
-                {% endif %}
             </div>
         {% endif %}
     </div>
 </body>
 </html>
+
 ''')
 
 if __name__ == '__main__':
