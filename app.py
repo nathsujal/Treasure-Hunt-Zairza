@@ -89,7 +89,7 @@ def download_qr_codes():
 
             # Save QR code to a temporary BytesIO object
             img_buffer = BytesIO()
-            qr.save(img_buffer, format='PNG')
+            qr_img.save(img_buffer, format='PNG')
             img_buffer.seek(0)
 
             # Add the image to the zip file
