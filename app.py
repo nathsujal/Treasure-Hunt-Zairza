@@ -7,7 +7,29 @@ from datetime import datetime
 import zipfile
 
 app = Flask(__name__)
-app.secret_key = os.environ.get('SECRET_KEY', 'your-secret-key-here')
+
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD")
+
+# Directory where QR codes are stored
+QR_CODES_DIR = "qr_codes"  # Adjust the path as needed
+
+@app.route("/admin", methods=["GET", "POST"])
+def admin():
+    if request.method == "POST":
+        password = request.form.get("password")
+        if password == ADMIN_PASSWORD:
+            # Create a zip file of all QR codes
+            memory_file = BytesIO()
+            with zipfile.ZipFile(memory_file, 'w') as zipf:
+                for root, dirs, files in os.walk(QR_CODES_DIR):
+                    for file in files:
+                        file_path = os.path.join(root, file)
+                        zipf.write(file_path, os.path.relpath(file_path, QR_CODES_DIR))
+            memory_file.seek(0)
+            return send_file(memory_file, mimetype='application/zip', as_attachment=True, download_name="qr_codes.zip")
+        else:
+            return "Incorrect password", 403
+    return render_template("admin.html")
 
 # Location data
 LOCATIONS = {
@@ -142,77 +164,6 @@ def location(location_id):
 for directory in ['static/qr_codes', 'static/downloads', 'templates']:
     if not os.path.exists(directory):
         os.makedirs(directory)
-
-# Write the template files
-with open('templates/index.html', 'w') as f:
-    f.write('''
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Treasure Hunt</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-100 min-h-screen py-6">
-    <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl m-4 p-6">
-        <h1 class="text-2xl font-bold mb-4">Welcome to the Treasure Hunt!</h1>
-        <p class="mb-4">Start your journey by visiting Location A: Starting Point - Library</p>
-        <p class="text-sm text-gray-600 mb-4">Each location will provide you with a riddle leading to the next location.</p>
-        <a href="{{ url_for('location', location_id='A') }}" 
-           class="inline-block bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-            Start Hunt
-        </a>
-    </div>
-</body>
-</html>
-''')
-
-with open('templates/location.html', 'w') as f:
-    f.write('''
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Location {{location_id}} - Treasure Hunt</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body class="bg-gray-100 min-h-screen py-6">
-    <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl m-4 p-6">
-        <h1 class="text-2xl font-bold mb-4">Location {{location_id}}</h1>
-        
-        {% if not unlocked %}
-            <form method="POST" class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700">
-                        Enter password from previous location:
-                    </label>
-                    <input type="text" name="password" 
-                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                </div>
-                {% if error %}
-                    <p class="text-red-500 text-sm">{{error}}</p>
-                {% endif %}
-                <button type="submit" 
-                        class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-                    Unlock
-                </button>
-            </form>
-        {% else %}
-            <div class="space-y-4">
-                <div>
-                    <h2 class="font-semibold">Current Location:</h2>
-                    <p>{{location.name}}</p>
-                </div>
-                <div>
-                    <h2 class="font-semibold">Your Riddle:</h2>
-                    <p>{{location.riddle}}</p>
-                </div>
-            </div>
-        {% endif %}
-    </div>
-</body>
-</html>
-
-''')
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 10000))
