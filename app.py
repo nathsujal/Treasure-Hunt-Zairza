@@ -67,22 +67,28 @@ def download_qr_codes():
     if password != ADMIN_PASSWORD:
         return "Unauthorized", 401
 
+    base_url = "https://treasure-hunt-zairza.onrender.com/"
+
     # Create a BytesIO object to store the .zip file in memory
     zip_buffer = BytesIO()
 
     # Create a ZipFile object
     with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
-        for location in LOCATIONS:
-            # Generate QR code
-            qr = qrcode.make(location)
+        for location_id in LOCATIONS:
+            url = f"{base_url}/location/{location_id}"
+            qr = qrcode.QRCode(
+                version=1,
+                error_correction=qrcode.constants.ERROR_CORRECT_H,
+                box_size=10,
+                border=4,
+            )
+            qr.add_data(url)
+            qr.make(fit=True)
             
-            # Save QR code to a temporary BytesIO object
-            img_buffer = BytesIO()
-            qr.save(img_buffer, format='PNG')
-            img_buffer.seek(0)
-            
+            img = qr.make_image(fill_color="black", back_color="white")
+
             # Add the image to the zip file
-            zip_file.writestr(f"{location}.png", img_buffer.read())
+            zip_file.writestr(f"{location}.png", img.read())
 
     # Ensure the buffer's pointer is at the beginning
     zip_buffer.seek(0)
@@ -94,13 +100,6 @@ def download_qr_codes():
         as_attachment=True,
         download_name='qr_codes.zip'
     )
-
-
-def get_base_url():
-    """Get the base URL for the application"""
-    if os.environ.get('RENDER'):
-        return os.environ.get('RENDER_EXTERNAL_URL', 'http://localhost:10000')
-    return request.url_root.rstrip('/')
 
 def generate_qr_codes():
     """Generate all QR codes and save them to the system"""
@@ -121,7 +120,6 @@ def generate_qr_codes():
         qr.make(fit=True)
         
         img = qr.make_image(fill_color="black", back_color="white")
-        img.save(f'static/qr_codes/location_{location_id}.png')
 
 def get_qr_code_data(location_id):
     """Get QR code as base64 string"""
@@ -161,11 +159,6 @@ def location(location_id):
         error=error,
         unlocked=unlocked
     )
-
-# Ensure directories exist
-for directory in ['static/qr_codes', 'static/downloads', 'templates']:
-    if not os.path.exists(directory):
-        os.makedirs(directory)
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 10000))
