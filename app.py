@@ -16,24 +16,6 @@ print("admin password:", ADMIN_PASSWORD)
 # Directory where QR codes are stored
 QR_CODES_DIR = "qr_codes"  # Adjust the path as needed
 
-@app.route("/admin", methods=["GET", "POST"])
-def admin():
-    if request.method == "POST":
-        password = request.form.get("password")
-        if password == ADMIN_PASSWORD:
-            # Create a zip file of all QR codes
-            memory_file = BytesIO()
-            with zipfile.ZipFile(memory_file, 'w') as zipf:
-                for root, dirs, files in os.walk(QR_CODES_DIR):
-                    for file in files:
-                        file_path = os.path.join(root, file)
-                        zipf.write(file_path, os.path.relpath(file_path, QR_CODES_DIR))
-            memory_file.seek(0)
-            return send_file(memory_file, mimetype='application/zip', as_attachment=True, download_name="qr_codes.zip")
-        else:
-            return "Incorrect password", 403
-    return render_template("admin.html")
-
 # Location data
 LOCATIONS = {
     'A': {
@@ -74,6 +56,46 @@ LOCATIONS = {
     }
 }
 
+@app.route("/admin", methods=["GET"])
+def admin():
+    return render_template("admin.html")
+
+@app.route('/admin/download', methods=['POST'])
+def download_qr_codes():
+    # Check if the password provided in the form matches
+    password = request.form.get('password')
+    if password != ADMIN_PASSWORD:
+        return "Unauthorized", 401
+
+    # Create a BytesIO object to store the .zip file in memory
+    zip_buffer = BytesIO()
+
+    # Create a ZipFile object
+    with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
+        for location in LOCATIONS:
+            # Generate QR code
+            qr = qrcode.make(location)
+            
+            # Save QR code to a temporary BytesIO object
+            img_buffer = BytesIO()
+            qr.save(img_buffer, format='PNG')
+            img_buffer.seek(0)
+            
+            # Add the image to the zip file
+            zip_file.writestr(f"{location}.png", img_buffer.read())
+
+    # Ensure the buffer's pointer is at the beginning
+    zip_buffer.seek(0)
+
+    # Send the zip file to the client for download
+    return send_file(
+        zip_buffer,
+        mimetype='application/zip',
+        as_attachment=True,
+        download_name='qr_codes.zip'
+    )
+
+
 def get_base_url():
     """Get the base URL for the application"""
     if os.environ.get('RENDER'):
@@ -111,29 +133,6 @@ def index():
     # Generate QR codes when the application starts
     generate_qr_codes()
     return render_template('index.html')
-
-@app.route('/download_qr_codes')
-def download_qr_codes():
-    # Create zip file containing all QR codes
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    zip_filename = f'qr_codes_{timestamp}.zip'
-    
-    if not os.path.exists('static/downloads'):
-        os.makedirs('static/downloads')
-        
-    zip_path = os.path.join('static/downloads', zip_filename)
-    
-    with zipfile.ZipFile(zip_path, 'w') as zipf:
-        for location_id in LOCATIONS:
-            qr_path = f'static/qr_codes/location_{location_id}.png'
-            zipf.write(qr_path, f'location_{location_id}.png')
-    
-    return send_file(
-        zip_path,
-        mimetype='application/zip',
-        as_attachment=True,
-        download_name=zip_filename
-    )
 
 @app.route('/location/<location_id>', methods=['GET', 'POST'])
 def location(location_id):

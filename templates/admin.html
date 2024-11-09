@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Admin Page</title>
+    <title>Admin Download Page</title>
 </head>
 <body>
-    <h2>Admin Page</h2>
-    <form method="POST" action="/admin">
-        <label for="password">Enter Password:</label>
+    <h2>Enter Admin Password to Download QR Codes</h2>
+    <form action="/admin/download" method="post">
+        <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
         <button type="submit">Download QR Codes</button>
     </form>
