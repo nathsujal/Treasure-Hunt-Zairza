@@ -1,12 +1,13 @@
-from flask import Flask, render_template, request, send_file, make_response
+from flask import Flask, render_template, request, send_file, url_for
 import qrcode
 from io import BytesIO
 import base64
 import os
 from datetime import datetime
+from werkzeug.urls import url_quote
 
 app = Flask(__name__)
-app.secret_key = 'your-secret-key-here'  # Change this to a secure secret key
+app.secret_key = os.environ.get('SECRET_KEY', 'your-secret-key-here')
 
 # Location data
 LOCATIONS = {
@@ -48,6 +49,12 @@ LOCATIONS = {
     }
 }
 
+def get_base_url():
+    """Get the base URL for the application"""
+    if os.environ.get('RENDER'):
+        return os.environ.get('RENDER_EXTERNAL_URL', 'http://localhost:10000')
+    return request.url_root.rstrip('/')
+
 def generate_qr_code(data, location_id):
     """Generate QR code and return as base64 string"""
     qr = qrcode.QRCode(
@@ -78,7 +85,7 @@ def index():
 
 @app.route('/generate_qr_codes')
 def generate_qr_codes_page():
-    base_url = request.url_root.rstrip('/')
+    base_url = get_base_url()
     qr_codes = {}
     
     for location_id, location_data in LOCATIONS.items():
@@ -93,7 +100,7 @@ def generate_qr_codes_page():
 
 @app.route('/download_qr_codes')
 def download_qr_codes():
-    base_url = request.url_root.rstrip('/')
+    base_url = get_base_url()
     
     # Generate all QR codes
     for location_id in LOCATIONS:
@@ -150,9 +157,10 @@ def location(location_id):
         unlocked=unlocked
     )
 
-# Create templates directory if it doesn't exist
-if not os.path.exists('templates'):
-    os.makedirs('templates')
+# Ensure directories exist
+for directory in ['static/qr_codes', 'static/downloads', 'templates']:
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
 # Write the template files
 with open('templates/qr_codes.html', 'w') as f:
@@ -192,7 +200,6 @@ with open('templates/qr_codes.html', 'w') as f:
 </html>
 ''')
 
-# Update index.html to include link to QR codes page
 with open('templates/index.html', 'w') as f:
     f.write('''
 <!DOCTYPE html>
@@ -215,7 +222,6 @@ with open('templates/index.html', 'w') as f:
 </html>
 ''')
 
-# Update existing location.html template
 with open('templates/location.html', 'w') as f:
     f.write('''
 <!DOCTYPE html>
@@ -270,4 +276,5 @@ with open('templates/location.html', 'w') as f:
 ''')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 10000)))
+    port = int(os.environ.get('PORT', 10000))
+    app.run(host='0.0.0.0', port=port)
