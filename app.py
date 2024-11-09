@@ -104,7 +104,7 @@ def get_base_url():
 
 def generate_qr_codes():
     """Generate all QR codes and save them to the system"""
-    base_url = get_base_url()
+    base_url = "https://treasure-hunt-zairza.onrender.com/"
     
     if not os.path.exists('static/qr_codes'):
         os.makedirs('static/qr_codes')
