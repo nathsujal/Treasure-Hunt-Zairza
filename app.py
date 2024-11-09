@@ -93,7 +93,7 @@ def download_qr_codes():
             img_buffer.seek(0)
 
             # Add the image to the zip file
-            zip_file.writestr(f"{location}.png", img_buffer.read())
+            zip_file.writestr(f"{location_id}.png", img_buffer.read())
 
     # Ensure the buffer's pointer is at the beginning
     zip_buffer.seek(0)
