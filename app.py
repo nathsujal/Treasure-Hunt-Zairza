@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, send_file, url_for
+from flask import Flask, render_template, request, send_file, url_for, jsonify
 import qrcode
 from io import BytesIO
 import base64
@@ -11,6 +11,7 @@ app = Flask(__name__)
 
 load_dotenv()
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD")
+FINAL_ANSWER = "69"
 
 # Directory where QR codes are stored
 QR_CODES_DIR = "qr_codes"  # Adjust the path as needed
@@ -177,24 +178,54 @@ def location(location_id):
     location_data = LOCATIONS[location_id]
     error = None
     unlocked = False
+    completion_time = None
 
     # First location is always unlocked
     if location_id == 'A':
         unlocked = True
 
-    if request.method == 'POST':
-        password = request.form.get('password', '').lower()
-        if password == location_data['password']:
-            unlocked = True
-        else:
-            error = "Incorrect password! Try again."
+    # Special handling for Location F
+    if location_id == 'F':
+        if request.method == 'POST':
+            if 'password' in request.form:
+                # Handle the initial password check
+                password = request.form.get('password', '').lower()
+                if password == location_data['password']:
+                    unlocked = True
+                else:
+                    error = "Incorrect password! Try again."
+            elif 'final_answer' in request.form:
+                # Handle the final answer submission
+                final_answer = request.form.get('final_answer', '').strip()
+                if final_answer == FINAL_ANSWER:
+                    completion_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    return jsonify({
+                        'status': 'success',
+                        'message': 'Congratulations! You have completed the treasure hunt!',
+                        'completion_time': completion_time
+                    })
+                else:
+                    return jsonify({
+                        'status': 'error',
+                        'message': 'Incorrect answer. Try again!'
+                    })
+    else:
+        # Normal password handling for other locations
+        if request.method == 'POST':
+            password = request.form.get('password', '').lower()
+            if password == location_data['password']:
+                unlocked = True
+            else:
+                error = "Incorrect password! Try again."
 
     return render_template(
         'location.html',
         location_id=location_id,
         location=location_data,
         error=error,
-        unlocked=unlocked
+        unlocked=unlocked,
+        is_final=(location_id == 'F'),
+        completion_time=completion_time
     )
 
 if __name__ == '__main__':
