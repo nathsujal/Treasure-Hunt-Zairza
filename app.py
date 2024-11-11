@@ -83,6 +83,8 @@ Flip them around, the fun’s the same,
 Zairzest owes this cheeky name.
 What number pays for the fest’s delight,
 Where tech and laughter unite?
+
+https://pastebin.com/HAggA3Ry
         ''',
         'password': 'zairza',
         'next_location': None
@@ -193,20 +195,39 @@ def location(location_id):
     location_data = LOCATIONS[location_id]
     error = None
     unlocked = False
+    completion_time = None
+
+    # Check if this is the final location
+    is_final = location_id == 'F'
 
     # First location is always unlocked
     if location_id == 'A':
         unlocked = True
 
+    # Handle POST requests
     if request.method == 'POST':
-        password = request.form.get('password', '').lower()
-        if password == location_data['password']:
-            unlocked = True
+        if is_final and 'final_answer' in request.form:
+            # Handle final answer submission
+            final_answer = request.form.get('final_answer', '').strip()
+            if final_answer == FINAL_ANSWER:
+                completion_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                return jsonify({
+                    'status': 'success',
+                    'message': 'Congratulations! You have completed the treasure hunt!',
+                    'completion_time': completion_time
+                })
+            else:
+                return jsonify({
+                    'status': 'error',
+                    'message': 'Incorrect answer. Try again!'
+                })
         else:
-            error = "Incorrect password! Try again."
-
-    # Check if this is the final location
-    is_final = location_data.get('is_final', False)
+            # Handle regular password check
+            password = request.form.get('password', '').lower()
+            if password == location_data['password']:
+                unlocked = True
+            else:
+                error = "Incorrect password! Try again."
 
     return render_template(
         'location.html',
@@ -214,7 +235,8 @@ def location(location_id):
         location=location_data,
         error=error,
         unlocked=unlocked,
-        is_final=is_final
+        completion_time=completion_time,
+        is_final=is_final  # Pass is_final to the template
     )
 
 
