@@ -39,7 +39,7 @@ Find where rhythm meets whispered tease.
         'next_location': 'C'
     },
     'C': {
-        'name': 'Arpegio',
+        'name': 'Arpeggio',
         'riddle': '''
 Where melodies blend and secrets took flight,
 Claps echoed loud through a skylight.
@@ -57,7 +57,7 @@ Not for food, but for something planned.
 A crowd of boys, hearts in a whirl,
 Waiting there for a glimpse of a twirl.
         ''',
-        'password': 'arpegio',
+        'password': 'arpeggio',
         'next_location': 'E'
     },
     'E': {
@@ -70,7 +70,7 @@ The Brahmin’s wisdom, never to fade.
 Together they lead, diverse yet strong,
 Guess where they are, where they all belong?
         ''',
-        'password': 'arpegio',
+        'password': 'khr',
         'next_location': 'F'
     },
     'F': {
@@ -183,7 +183,7 @@ def location(location_id):
         unlocked = True
 
     if request.method == 'POST':
-        password = request.form.get('password', '').lower().replace(' ', '')
+        password = request.form.get('password', '').lower()
         if password == location_data['password']:
             unlocked = True
         else:
