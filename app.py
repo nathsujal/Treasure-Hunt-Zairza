@@ -18,39 +18,72 @@ QR_CODES_DIR = "qr_codes"  # Adjust the path as needed
 # Location data
 LOCATIONS = {
     'A': {
-        'name': 'Starting Point - Library',
-        'riddle': 'Where numbers flow and waves grow, data streams in rows. Find the place where knowledge glows.',
+        'name': 'Starting Point - Zairza',
+        'riddle': '''
+A gate once grand, now forever closed tight,
+Newcomers wonder if it ever saw light.
+Promised repairs that seem to delay,
+Find where the start is still locked away.''',
         'password': 'start',
         'next_location': 'B'
     },
     'B': {
-        'name': 'Computer Lab',
-        'riddle': 'Leaves dance in circles, beneath ancient bark. Your next stop lies in nature\'s park.',
-        'password': 'library',
+        'name': 'Main Gate',
+        'riddle': '''
+Where melodies blend and secrets took flight,
+Claps echoed loud through a skylight.
+But true talent plays strings and keys,
+Find where rhythm meets whispered tease.
+        ''',
+        'password': 'zairza',
         'next_location': 'C'
     },
     'C': {
-        'name': 'Old Oak Tree',
-        'riddle': 'Where athletes gather, victories soar. Find your next clue where players score.',
-        'password': 'computerlab',
+        'name': 'Arpegio',
+        'riddle': '''
+Where melodies blend and secrets took flight,
+Claps echoed loud through a skylight.
+But true talent plays strings and keys,
+Find where rhythm meets whispered tease.
+        ''',
+        'password': 'main gate',
         'next_location': 'D'
     },
     'D': {
-        'name': 'Sports Field',
-        'riddle': 'Books and bytes in perfect peace, where silence helps the mind release.',
-        'password': 'oaktree',
+        'name': 'KHR',
+        'riddle': '''
+At 7 PM, outside I stand,
+Not for food, but for something planned.
+A crowd of boys, hearts in a whirl,
+Waiting there for a glimpse of a twirl.
+        ''',
+        'password': 'arpegio',
         'next_location': 'E'
     },
     'E': {
-        'name': 'Study Room',
-        'riddle': 'Final challenge in your quest: where morning greetings are expressed.',
-        'password': 'sportsfield',
+        'name': 'Zairza',
+        'riddle': '''
+Three minds, each from a different place,
+One speaks Tamil, with speed and grace.
+One from Marwari roots, sharp in trade,
+The Brahmin’s wisdom, never to fade.
+Together they lead, diverse yet strong,
+Guess where they are, where they all belong?
+        ''',
+        'password': 'arpegio',
         'next_location': 'F'
     },
     'F': {
-        'name': 'Main Entrance',
-        'riddle': 'Congratulations! You\'ve completed the treasure hunt!',
-        'password': 'studyroom',
+        'name': 'Zairza',
+        'riddle': '''
+A playful fee, a mischievous twist,
+A number so cheeky, it can’t be missed.
+Flip them around, the fun’s the same,
+Zairzest owes this cheeky name.
+What number pays for the fest’s delight,
+Where tech and laughter unite?
+        ''',
+        'password': 'zairza',
         'next_location': None
     }
 }
