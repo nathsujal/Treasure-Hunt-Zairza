@@ -42,27 +42,16 @@ Find where rhythm meets whispered tease.
     'C': {
         'name': 'Arpeggio',
         'riddle': '''
-Where melodies blend and secrets took flight,
-Claps echoed loud through a skylight.
-But true talent plays strings and keys,
-Find where rhythm meets whispered tease.
+At 7 PM, outside I stand,
+Not for food, but for something planned.
+A crowd of boys, hearts in a whirl,
+Waiting there for a glimpse of a twirl.
         ''',
         'password': 'main gate',
         'next_location': 'D'
     },
     'D': {
         'name': 'KHR',
-        'riddle': '''
-At 7 PM, outside I stand,
-Not for food, but for something planned.
-A crowd of boys, hearts in a whirl,
-Waiting there for a glimpse of a twirl.
-        ''',
-        'password': 'arpeggio',
-        'next_location': 'E'
-    },
-    'E': {
-        'name': 'Zairza',
         'riddle': '''
 Three minds, each from a different place,
 One speaks Tamil, with speed and grace.
@@ -71,10 +60,10 @@ The Brahmin’s wisdom, never to fade.
 Together they lead, diverse yet strong,
 Guess where they are, where they all belong?
         ''',
-        'password': 'khr',
-        'next_location': 'F'
+        'password': 'arpeggio',
+        'next_location': 'E'
     },
-    'F': {
+    'E': {
         'name': 'Zairza',
         'riddle': '''
 A playful fee, a mischievous twist,
@@ -83,12 +72,13 @@ Flip them around, the fun’s the same,
 Zairzest owes this cheeky name.
 What number pays for the fest’s delight,
 Where tech and laughter unite?
-
+-
+Follow this link
 https://pastebin.com/HAggA3Ry
         ''',
-        'password': 'zairza',
+        'password': 'khr',
         'next_location': None
-    }
+    },
 }
 
 @app.route("/admin", methods=["GET"])
