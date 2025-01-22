@@ -21,10 +21,10 @@ LOCATIONS = {
     'A': {
         'name': 'Starting Point - SAC',
         'riddle': '''
-Where beats and rhythms fill the air,
-Creativity flows and souls lay bare.
-A hub for jamming, both day and night,
-Your next clue hides where music feels right.
+Once a spotlight for stars to shine,
+Last year, it fell out of line.
+But now it's ready, no longer away,
+Find your next clue where performers sway.
         ''',
         'password': 'start',
         'next_location': 'B'
@@ -32,10 +32,10 @@ Your next clue hides where music feels right.
     'B': {
         'name': 'Stage Area',
         'riddle': '''
-Once a spotlight for stars to shine,
-Last year, it fell out of line.
-But now it's ready, no longer away,
-Find your next clue where performers sway.
+Where ideas ignite and dreams take flight,
+A hub of innovation, shining bright.
+From spark to startup, it's the place to align,
+Find your next clue where visions refine.
         ''',
         'password': 'sac',
         'next_location': 'C'
@@ -43,10 +43,10 @@ Find your next clue where performers sway.
     'C': {
         'name': 'OUTR FINE',
         'riddle': '''
-Where ideas ignite and dreams take flight,
-A hub of innovation, shining bright.
-From spark to startup, it's the place to align,
-Find your next clue where visions refine.
+Where wheels depart and friendships mend,
+Hostel hearts bid goodbye to day scholar friends.
+The journey begins, but bonds remain true,
+Find your next clue where partings ensue.
         ''',
         'password': 'stage area',
         'next_location': 'D'
@@ -54,27 +54,16 @@ Find your next clue where visions refine.
     'D': {
         'name': 'Bus Stand',
         'riddle': '''
-Where wheels depart and friendships mend,
-Hostel hearts bid goodbye to day scholar friends.
-The journey begins, but bonds remain true,
-Find your next clue where partings ensue.
-        ''',
-        'password': 'outr fine',
-        'next_location': 'E'
-    },
-    'E': {
-        'name': 'Zairza',
-        'riddle': '''
 The pioneers of tech, where minds ignite,
 Crafting robots and designs so bright.
 At the best of spots, where innovation thrives,
 Your next clue waits, where brilliance arrives.
         ''',
-        'password': 'bus stand',
-        'next_location': 'F'
+        'password': 'outr fine',
+        'next_location': 'E'
     },
-    'F': {
-        'name': "Final Riddle - Don't Shout come and whisper in our ears!",
+    'E': {
+        'name': 'Zairza - Final Riddle - Don't Shout Come And Whisper In Our Ears!',
         'riddle': '''
 A man of vision, wisdom, and grace,
 He led India’s growth, leaving a strong trace.
@@ -83,7 +72,7 @@ A safe car for the middle class to pursue.
 A gem we lost, but his legacy remains,
 When did this great soul’s journey end its reign?
         ''',
-        'password': "zairza",
+        'password': 'bus stand',
         'next_location': None
     }
 }
