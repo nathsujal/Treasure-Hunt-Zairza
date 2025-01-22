@@ -63,7 +63,7 @@ Your next clue waits, where brilliance arrives.
         'next_location': 'E'
     },
     'E': {
-        'name': 'Zairza - Final Riddle - Don't Shout Come And Whisper In Our Ears!',
+        'name': 'Zairza - Final Riddle - Don\'t Shout Come And Whisper In Our Ears!',
         'riddle': '''
 A man of vision, wisdom, and grace,
 He led India’s growth, leaving a strong trace.
