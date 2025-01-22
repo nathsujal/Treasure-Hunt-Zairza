@@ -37,7 +37,7 @@ Last year, it fell out of line.
 But now it's ready, no longer away,
 Find your next clue where performers sway.
         ''',
-        'password': 'zairza',
+        'password': 'sac',
         'next_location': 'C'
     },
     'C': {
