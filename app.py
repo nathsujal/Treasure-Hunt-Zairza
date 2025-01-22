@@ -65,10 +65,10 @@ Find your next clue where partings ensue.
     'E': {
         'name': 'Zairza',
         'riddle': '''
-Where hearts are healed over snacks and tea,
-And corners buzz with carefree glee.
-A break-time haven, both calm and loud,
-Your next clue hides amidst the crowd.
+The pioneers of tech, where minds ignite,
+Crafting robots and designs so bright.
+At the best of spots, where innovation thrives,
+Your next clue waits, where brilliance arrives.
 -
 Follow this link
 https://pastebin.com/HAggA3Ry
