@@ -19,64 +19,61 @@ QR_CODES_DIR = "qr_codes"  # Adjust the path as needed
 # Location data
 LOCATIONS = {
     'A': {
-        'name': 'Starting Point - Zairza',
+        'name': 'Starting Point - SAC',
         'riddle': '''
-A gate once grand, now forever closed tight,
-Newcomers wonder if it ever saw light.
-Promised repairs that seem to delay,
-Find where the start is still locked away.''',
+Where beats and rhythms fill the air,
+Creativity flows and souls lay bare.
+A hub for jamming, both day and night,
+Your next clue hides where music feels right.
+        ''',
         'password': 'start',
         'next_location': 'B'
     },
     'B': {
-        'name': 'Main Gate',
+        'name': 'Stage Area',
         'riddle': '''
-Where melodies blend and secrets took flight,
-Claps echoed loud through a skylight.
-But true talent plays strings and keys,
-Find where rhythm meets whispered tease.
+Once a spotlight for stars to shine,
+Last year, it fell out of line.
+But now it's ready, no longer away,
+Find your next clue where performers sway.
         ''',
         'password': 'zairza',
         'next_location': 'C'
     },
     'C': {
-        'name': 'Arpeggio',
+        'name': 'OUTR FINE',
         'riddle': '''
-At 7 PM, outside I stand,
-Not for food, but for something planned.
-A crowd of boys, hearts in a whirl,
-Waiting there for a glimpse of a twirl.
+Where ideas ignite and dreams take flight,
+A hub of innovation, shining bright.
+From spark to startup, it's the place to align,
+Find your next clue where visions refine.
         ''',
-        'password': 'main gate',
+        'password': 'stage area',
         'next_location': 'D'
     },
     'D': {
-        'name': 'KHR',
+        'name': 'Bus Stand',
         'riddle': '''
-Three minds, each from a different place,
-One speaks Tamil, with speed and grace.
-One from Marwari roots, sharp in trade,
-The Brahmin’s wisdom, never to fade.
-Together they lead, diverse yet strong,
-Guess where they are, where they all belong?
+Where wheels depart and friendships mend,
+Hostel hearts bid goodbye to day scholar friends.
+The journey begins, but bonds remain true,
+Find your next clue where partings ensue.
         ''',
-        'password': 'arpeggio',
+        'password': 'outr fine',
         'next_location': 'E'
     },
     'E': {
         'name': 'Zairza',
         'riddle': '''
-A playful fee, a mischievous twist,
-A number so cheeky, it can’t be missed.
-Flip them around, the fun’s the same,
-Zairzest owes this cheeky name.
-What number pays for the fest’s delight,
-Where tech and laughter unite?
+Where hearts are healed over snacks and tea,
+And corners buzz with carefree glee.
+A break-time haven, both calm and loud,
+Your next clue hides amidst the crowd.
 -
 Follow this link
 https://pastebin.com/HAggA3Ry
         ''',
-        'password': 'khr',
+        'password': 'bus stand',
         'next_location': None
     },
 }
