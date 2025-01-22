@@ -69,13 +69,23 @@ The pioneers of tech, where minds ignite,
 Crafting robots and designs so bright.
 At the best of spots, where innovation thrives,
 Your next clue waits, where brilliance arrives.
--
-Follow this link
-https://pastebin.com/HAggA3Ry
         ''',
         'password': 'bus stand',
-        'next_location': None
+        'next_location': 'F'
     },
+    'F': {
+        'name': "Final Riddle - Don't Shout come and whisper in our ears!",
+        'riddle': '''
+A man of vision, wisdom, and grace,
+He led India’s growth, leaving a strong trace.
+His dream was simple, yet vast and true,
+A safe car for the middle class to pursue.
+A gem we lost, but his legacy remains,
+When did this great soul’s journey end its reign?
+        ''',
+        'password': "zairza",
+        'next_location': None
+    }
 }
 
 @app.route("/admin", methods=["GET"])
